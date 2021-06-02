@@ -10,6 +10,9 @@ https://www.geeksforgeeks.org/iterative-postorder-traversal-using-stack/
 #include <queue>
 #include <deque>
 #include <stack>
+#include <string>
+#include <algorithm>
+#include <sstream>
 #include <unordered_set>
 using namespace std;
 namespace ariel
@@ -23,16 +26,9 @@ namespace ariel
         struct Node
         {
             T data;
-            Node *parent, *right, *left;
-            Node() : data(nullptr), right(nullptr), left(nullptr)
-            {
-            }
-            Node(T data) : data(data), right(nullptr), left(nullptr)
-            {
-            }
-            Node(T data, Node *parent) : data(data), parent(parent), right(nullptr), left(nullptr)
-            {
-            }
+            Node *right, *left;
+            Node() : data(nullptr), right(nullptr), left(nullptr) {}
+            Node(T data) : data(data), right(nullptr), left(nullptr) {}
         };
 
         Node *root;
@@ -193,7 +189,7 @@ namespace ariel
                 change_data(p->left, left);
                 return *this;
             }
-            p->left = new Node(left, p);
+            p->left = new Node(left);
             return *this;
         }
 
@@ -210,24 +206,61 @@ namespace ariel
                 change_data(p->right, right);
                 return *this;
             }
-            p->right = new Node(right, p);
+            p->right = new Node(right);
             return *this;
         }
 
-        friend ostream &operator<<(ostream &os, BinaryTree<T> &bt)
+        friend ostream &operator<<(ostream &os, const BinaryTree<T> &bt)
         {
             if (bt.root == nullptr)
             {
                 return os << "The tree is empty" << endl;
             }
-            for (auto it = bt.begin_preorder(); it != bt.end_preorder(); ++it)
-            {
-                os << (*it) << ",";
-            }
-            return os << endl;
+            os << "♣ Binary Tree - BEGIN ♣\n";
+            bt.print(os, bt.root, 0, "");
+            os << "\n♣ Binary Tree - END ♣";
+            return os;
         }
 
     private:
+        void print(ostream &os, Node *node, unsigned space, string next_line) const
+        {
+            if (node == nullptr)
+            {
+                return;
+            }
+            os << node->data;
+            stringstream data;
+            data << node->data;
+            unsigned size = data.str().length();
+            next_line += string(space + size - 1, ' ');
+            const unsigned arrow = 5;
+            if (node->left != nullptr)
+            {
+                next_line += "|";
+            }
+            else
+            {
+                next_line += " ";
+            }
+            if (node->right != nullptr)
+            {
+                os << "----→";
+                print(os, node->right, arrow, next_line);
+            }
+            if (node->left != nullptr)
+            {
+
+                os << "\n"
+                   << next_line
+                   << "\n";
+                os << next_line << "----→";
+                unsigned const size_line = next_line.size();
+                next_line.replace(size_line - 1, size_line, " ");
+                print(os, node->left, arrow, next_line);
+            }
+        }
+
         class iterator
         {
         public: //fix to protected
