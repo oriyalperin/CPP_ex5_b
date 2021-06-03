@@ -13,7 +13,7 @@ namespace ariel
     template <typename T>
     class iterator
     {
-    public: //fix to protected
+    protected:
         Node<T> *curr;
         Node<T> *last_node;
         deque<Node<T> *> stack;
@@ -33,13 +33,13 @@ namespace ariel
             }
         }
 
-        //public:
-        virtual iterator<T> &operator++()
+    public:
+        iterator<T> &operator++()
         {
             next_node();
             return *this;
         }
-        virtual iterator<T> operator++(int)
+        iterator<T> operator++(int)
         {
             iterator temp = *this;
             next_node();
@@ -73,7 +73,6 @@ namespace ariel
     public:
         PreOrderIt(Node<T> *node = nullptr)
         {
-
             if (node != nullptr)
             {
                 iterator<T>::last_node = node;
@@ -91,7 +90,7 @@ namespace ariel
     private:
         virtual void order()
         {
-            while (!iterator<T>::stack.empty())
+            if (!iterator<T>::stack.empty())
             {
                 iterator<T>::last_node = iterator<T>::stack.front();
                 iterator<T>::stack.pop_front();
@@ -104,16 +103,17 @@ namespace ariel
                 {
                     iterator<T>::stack.push_front(iterator<T>::last_node->left);
                 }
-                break;
             }
         }
     };
+
     template <typename T>
     class InOrderIt : public iterator<T>
     {
     public:
         InOrderIt(Node<T> *node = nullptr)
         {
+
             if (node != nullptr)
             {
                 iterator<T>::last_node = node;
@@ -130,28 +130,22 @@ namespace ariel
     private:
         virtual void order()
         {
-            while (true)
+
+            while (iterator<T>::last_node != nullptr)
             {
-                if (iterator<T>::last_node != nullptr)
-                {
-                    iterator<T>::stack.push_front(iterator<T>::last_node);
-                    iterator<T>::last_node = iterator<T>::last_node->left;
-                }
-                else
-                {
-                    if (iterator<T>::stack.empty())
-                    {
-                        break;
-                    }
-                    iterator<T>::last_node = iterator<T>::stack.front();
-                    iterator<T>::stack.pop_front();
-                    iterator<T>::nodes_order.push(iterator<T>::last_node);
-                    iterator<T>::last_node = iterator<T>::last_node->right;
-                    break;
-                }
+                iterator<T>::stack.push_front(iterator<T>::last_node);
+                iterator<T>::last_node = iterator<T>::last_node->left;
+            }
+            if (!iterator<T>::stack.empty())
+            {
+                iterator<T>::last_node = iterator<T>::stack.front();
+                iterator<T>::stack.pop_front();
+                iterator<T>::nodes_order.push(iterator<T>::last_node);
+                iterator<T>::last_node = iterator<T>::last_node->right;
             }
         }
     };
+
     template <typename T>
     class PostOrderIt : public iterator<T>
     {
@@ -174,9 +168,9 @@ namespace ariel
     private:
         virtual void order()
         {
+            //int flag = false;
             if (!iterator<T>::stack.empty() && iterator<T>::curr == iterator<T>::stack.front()->right)
             {
-
                 Node<T> *temp = iterator<T>::stack.front();
                 iterator<T>::stack.pop_front();
                 iterator<T>::nodes_order.push(temp);
@@ -192,6 +186,7 @@ namespace ariel
                     }
                     else
                     {
+
                         Node<T> *temp = iterator<T>::stack.front()->right;
                         if (temp == nullptr)
                         {
@@ -204,18 +199,6 @@ namespace ariel
                     }
                 }
             }
-        }
-
-        bool order_for_node(Node<T> *temp)
-        {
-            if (!iterator<T>::stack.empty() && temp == iterator<T>::stack.front()->right)
-            {
-                temp = iterator<T>::stack.front();
-                iterator<T>::stack.pop_front();
-                iterator<T>::nodes_order.push(temp);
-                return true;
-            }
-            return false;
         }
     };
 }

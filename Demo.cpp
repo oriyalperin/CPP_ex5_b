@@ -16,7 +16,6 @@ public:
     string name;
     int age;
     person() : name(""), age(0) {}
-    //~person(){}
     person(string name, int age) : name(name), age(age) {}
     friend bool operator==(const person &p1, const person &p2)
     {
@@ -46,6 +45,7 @@ public:
 int main()
 {
 
+    cout << "***Binary Tree - int***" << endl;
     BinaryTree<int> b;
     b.add_root(1);
     b.add_left(1, 2);
@@ -61,6 +61,17 @@ int main()
     b.add_right(6, 9);
     b.add_left(9, 10);
     cout << b << endl;
+
+    int count = 1;
+    cout << "-post order:-" << endl;
+    for (auto it = b.begin_postorder(); it != b.end_postorder(); it++) //10 checks
+    {
+        cout << (*it) << " ";
+        count++;
+    }
+    cout << endl;
+
+    cout << "***Binary Tree - int***" << endl;
     BinaryTree<int> bt;
     bt.add_root(1);
     bt.add_left(1, 2);
@@ -73,20 +84,28 @@ int main()
     bt.add_right(6, 9);
     bt.add_left(9, 10);
 
-    int count = 1;
+    count = 1;
+    cout << "-pre order:-" << endl;
     for (auto it = bt.begin_preorder(); it != bt.end_preorder(); it++) //10 checks
     {
         cout << (*it) << " ";
-        //CHECK(count == *it);
         count++;
     }
     cout << endl;
 
+    cout << "***Binary Tree - string***" << endl;
     BinaryTree<string> bts;
-    //CHECK_THROWS(cout<<bts);
     bts.add_root("10");
     bts.add_root("5"); // root=5
-    //CHECK_THROWS(bts.add_left("10", "2"));
+    cout << "trying to add left son to node that doesn't exist" << endl;
+    try
+    {
+        bts.add_left("10", "2");
+    }
+    catch (exception &e)
+    {
+        cout << e.what() << endl;
+    }
     bts.add_left("5", "2");
     bts.add_left("2", "1");
     bts.add_right("2", "3");
@@ -99,13 +118,18 @@ int main()
     bts.add_left("10", "9");
 
     count = 1;
+    cout << "-in order:-" << endl;
     for (auto it = bts.begin_inorder(); it != bts.end_inorder(); it++) //10 checks
     {
         cout << (*it) << " is equal to " << count << endl;
         count++;
     }
     cout << endl;
+
+    cout << "Binary Tree - operator" << endl;
     cout << bts << endl;
+
+    cout << "***Binary Tree - person***" << endl;
     BinaryTree<person> btp;
     person dan{"Dan", 81};
     person rachel{"Rachel", 60};
@@ -119,8 +143,6 @@ int main()
     person dor{"Dor", 26};
     btp.add_root(dor);
     btp.add_root(dan);
-    //CHECK_NOTHROW(btp.add_root(dan));     //dan replaced dor as root
-    //CHECK_THROWS(btp.add_left(dor, gad)); //dor doesn't exist
     btp.add_left(dan, gad);
     btp.add_right(gad, rivka);
     btp.add_left(rivka, gil);
@@ -129,8 +151,6 @@ int main()
     btp.add_right(rachel, avi);
     btp.add_left(ben, dor);
     btp.add_left(ben, yael);
-    //CHECK_NOTHROW(btp.add_left(ben, yael));
-    //CHECK_THROWS(btp.add_left(dor, noam));
     btp.add_right(ben, noam);
 
     queue<person> family;
@@ -143,10 +163,10 @@ int main()
     family.emplace(noam);
     family.emplace(rachel);
     family.emplace(avi);
+
     for (auto it = btp.begin(); it != btp.end(); it++, family.pop())
     {
         cout << *it << endl;
-        //CHECK(*it == family.front());
     }
     cout << btp << endl;
 

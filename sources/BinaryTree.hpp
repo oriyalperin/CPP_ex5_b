@@ -1,6 +1,6 @@
 /*
 sources:
-https://github.com/mission-peace/interview/blob/master/src/com/interview/tree/TreeTraversals.java#L105
+https://github.com/mission-peace/interview/blob/master/src/com/interview/tree/TreeTraversals.java
 https://www.cs.odu.edu/~zeil/cs361/latest/Public/treetraversal/index.html
 https://www.geeksforgeeks.org/iterative-postorder-traversal-using-stack/
 */
@@ -39,7 +39,7 @@ namespace ariel
         }
         BinaryTree &operator=(const BinaryTree &bt) //= operator
         {
-            if (this != &bt)
+            if (&this->root != &bt.root)
             {
                 delete_tree(root);
                 *this = BinaryTree(bt);
@@ -264,7 +264,7 @@ namespace ariel
         }
         PreOrderIt<T> end_preorder()
         {
-            return PreOrderIt<T>{nullptr};
+            return PreOrderIt<T>{};
         }
 
         InOrderIt<T> begin_inorder()
@@ -273,7 +273,7 @@ namespace ariel
         }
         InOrderIt<T> end_inorder()
         {
-            return InOrderIt<T>{nullptr};
+            return InOrderIt<T>{};
         }
 
         PostOrderIt<T> begin_postorder()
@@ -282,16 +282,16 @@ namespace ariel
         }
         PostOrderIt<T> end_postorder()
         {
-            return PostOrderIt<T>{nullptr};
+            return PostOrderIt<T>{};
         }
 
         InOrderIt<T> begin()
         {
-            return begin_inorder();
+            return InOrderIt<T>{root};
         }
         InOrderIt<T> end()
         {
-            return end_inorder();
+            return InOrderIt<T>{};
         }
     };
 }
