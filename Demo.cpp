@@ -46,35 +46,18 @@ int main()
 {
 
     cout << "***Binary Tree - int***" << endl;
-    BinaryTree<int> b;
-    b.add_root(1);
-    b.add_left(1, 2);
-    b.add_left(2, 3);
-    b.add_left(3, 11);
-    b.add_right(3, 57);
-    b.add_right(2, 4);
-    b.add_right(4, 5);
-    b.add_right(5, 66);
-    b.add_left(5, 100);
-    b.add_right(1, 6);
-    b.add_left(6, 7);
-    b.add_right(6, 9);
-    b.add_left(9, 10);
-    cout << b << endl;
-
-    int count = 1;
-    cout << "-post order:-" << endl;
-    for (auto it = b.begin_postorder(); it != b.end_postorder(); it++) //10 checks
-    {
-        cout << (*it) << " ";
-        count++;
-    }
-    cout << endl;
-
-    cout << "***Binary Tree - int***" << endl;
     BinaryTree<int> bt;
     bt.add_root(1);
     bt.add_left(1, 2);
+    cout << "---try to add right son to parent 5 that doesn't exist---" << endl;
+    try
+    {
+        bt.add_right(5, 3);
+    }
+    catch (exception &e)
+    {
+        cout << "caught exception: " << e.what() << endl;
+    }
     bt.add_left(2, 3);
     bt.add_right(2, 4);
     bt.add_right(4, 5);
@@ -83,15 +66,33 @@ int main()
     bt.add_right(7, 8);
     bt.add_right(6, 9);
     bt.add_left(9, 10);
-
-    count = 1;
+    cout << bt << "\n"
+         << endl;
+    int count = 1;
     cout << "-pre order:-" << endl;
-    for (auto it = bt.begin_preorder(); it != bt.end_preorder(); it++) //10 checks
+    for (auto it = bt.begin_preorder(); it != bt.end_preorder(); ++it) //10 checks
     {
-        cout << (*it) << " ";
+        cout << (*it) << " is equal to " << count << endl;
         count++;
     }
-    cout << endl;
+    cout << "\n"
+         << endl;
+
+    cout << "-in order:-" << endl;
+    for (auto it = bt.begin_inorder(); it != bt.end_inorder(); ++it) //10 checks
+    {
+        cout << (*it) << " ";
+    }
+    cout << "\n"
+         << endl;
+
+    cout << "-post order:-" << endl;
+    for (auto it = bt.begin_postorder(); it != bt.end_postorder(); it++) //10 checks
+    {
+        cout << (*it) << " ";
+    }
+    cout << "\n"
+         << endl;
 
     cout << "***Binary Tree - string***" << endl;
     BinaryTree<string> bts;
@@ -116,7 +117,9 @@ int main()
     bts.add_right("8", "10");
     bts.add_right("6", "7");
     bts.add_left("10", "9");
-
+    cout << "Binary Tree - operator" << endl;
+    cout << bts << "\n"
+         << endl;
     count = 1;
     cout << "-in order:-" << endl;
     for (auto it = bts.begin_inorder(); it != bts.end_inorder(); it++) //10 checks
@@ -124,10 +127,22 @@ int main()
         cout << (*it) << " is equal to " << count << endl;
         count++;
     }
-    cout << endl;
-
-    cout << "Binary Tree - operator" << endl;
-    cout << bts << endl;
+    cout << "\n"
+         << endl;
+    cout << "-pre order:-" << endl;
+    for (auto it = bts.begin_preorder(); it != bts.end_preorder(); it++) //10 checks
+    {
+        cout << (*it) << " ";
+    }
+    cout << "\n"
+         << endl;
+    cout << "-post order:-" << endl;
+    for (auto it = bts.begin_postorder(); it != bts.end_postorder(); it++) //10 checks
+    {
+        cout << (*it) << " ";
+    }
+    cout << "\n"
+         << endl;
 
     cout << "***Binary Tree - person***" << endl;
     BinaryTree<person> btp;
@@ -152,7 +167,8 @@ int main()
     btp.add_left(ben, dor);
     btp.add_left(ben, yael);
     btp.add_right(ben, noam);
-
+    cout << btp << "\n"
+         << endl;
     queue<person> family;
     family.emplace(gad);
     family.emplace(gil);
@@ -164,11 +180,28 @@ int main()
     family.emplace(rachel);
     family.emplace(avi);
 
+    cout << "---default: in order---" << endl;
     for (auto it = btp.begin(); it != btp.end(); it++, family.pop())
     {
-        cout << *it << endl;
+        cout << *it << " is equal to: " << family.front() << endl;
     }
-    cout << btp << endl;
+    cout << "\n"
+         << endl;
+
+    cout << "---pre order---" << endl;
+    for (auto it = btp.begin_preorder(); it != btp.end_preorder(); it++)
+    {
+        cout << *it << " ";
+    }
+    cout << "\n"
+         << endl;
+    cout << "---post order---" << endl;
+    for (auto it = btp.begin_postorder(); it != btp.end_postorder(); ++it)
+    {
+        cout << *it << " ";
+    }
+    cout << "\n"
+         << endl;
 
     return 0;
 }
