@@ -248,38 +248,38 @@ namespace ariel
         }
 
     public:
-        iterator<T, order::pre> begin_preorder()
+        iterator<T> begin_preorder()
         {
-            return iterator<T, order::pre>{root};
+            return iterator<T>{order::pre, root};
         }
-        iterator<T, order::pre> end_preorder()
+        iterator<T> end_preorder()
         {
-            return iterator<T, order::pre>{};
-        }
-
-        iterator<T, order::in> begin_inorder()
-        {
-            return iterator<T, order::in>{root};
-        }
-        iterator<T, order::in> end_inorder()
-        {
-            return iterator<T, order::in>{};
+            return iterator<T>{order::pre};
         }
 
-        iterator<T, order::post> begin_postorder()
+        iterator<T> begin_inorder()
         {
-            return iterator<T, order::post>{root};
+            return iterator<T>{order::in, root};
         }
-        iterator<T, order::post> end_postorder()
+        iterator<T> end_inorder()
         {
-            return iterator<T, order::post>{};
+            return iterator<T>{order::in};
         }
 
-        iterator<T, order::in> begin()
+        iterator<T> begin_postorder()
+        {
+            return iterator<T>{order::post, root};
+        }
+        iterator<T> end_postorder()
+        {
+            return iterator<T>{order::post};
+        }
+
+        iterator<T> begin()
         {
             return begin_inorder();
         }
-        iterator<T, order::in> end()
+        iterator<T> end()
         {
             return end_inorder();
         }

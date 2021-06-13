@@ -17,16 +17,17 @@ namespace ariel
         post
     };
 
-    template <typename T, order o>
+    template <typename T>
     class iterator
     {
     private:
+        order o;
         Node<T> *curr;
         Node<T> *last_node;
         stack<Node<T> *> temp_nodes;
 
     public:
-        iterator(Node<T> *node = nullptr) : last_node(node), curr(nullptr)
+        iterator(order o, Node<T> *node = nullptr) : last_node(node), curr(nullptr), o(o)
         {
             if (node != nullptr)
             {
@@ -38,12 +39,12 @@ namespace ariel
             }
         }
 
-        iterator<T, o> &operator++()
+        iterator<T> &operator++()
         {
             order_by();
             return *this;
         }
-        iterator<T, o> operator++(int)
+        iterator<T> operator++(int)
         {
             iterator temp = *this;
             order_by();
