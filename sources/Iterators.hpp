@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 #include <queue>
-#include <deque>
+#include <stack>
 #include <string>
 #include <algorithm>
 #include <sstream>
@@ -10,39 +10,43 @@
 using namespace std;
 namespace ariel
 {
-    template <typename T>
+    enum class order
+    {
+        pre,
+        in,
+        post
+    };
+
+    template <typename T, order o>
     class iterator
     {
-    protected:
+    private:
         Node<T> *curr;
         Node<T> *last_node;
-        deque<Node<T> *> stack;
-        queue<Node<T> *> nodes_order;
-        virtual void order() {}
-        virtual void next_node()
+        stack<Node<T> *> temp_nodes;
+
+    public:
+        iterator(Node<T> *node = nullptr) : last_node(node), curr(nullptr)
         {
-            order();
-            if (!nodes_order.empty())
+            if (node != nullptr)
             {
-                curr = nodes_order.front();
-                nodes_order.pop();
-            }
-            else
-            {
-                curr = nullptr;
+                if (o == order::pre)
+                {
+                    temp_nodes.push(node);
+                }
+                order_by();
             }
         }
 
-    public:
-        iterator<T> &operator++()
+        iterator<T, o> &operator++()
         {
-            next_node();
+            order_by();
             return *this;
         }
-        iterator<T> operator++(int)
+        iterator<T, o> operator++(int)
         {
             iterator temp = *this;
-            next_node();
+            order_by();
             return temp;
         }
 
@@ -65,139 +69,95 @@ namespace ariel
         {
             return curr != (other.curr);
         }
-    };
-
-    template <typename T>
-    class PreOrderIt : public iterator<T>
-    {
-    public:
-        PreOrderIt(Node<T> *node = nullptr)
-        {
-            if (node != nullptr)
-            {
-                iterator<T>::last_node = node;
-                iterator<T>::stack.push_front(node);
-                order();
-                iterator<T>::curr = iterator<T>::nodes_order.front();
-                iterator<T>::nodes_order.pop();
-            }
-            else
-            {
-                iterator<T>::curr = nullptr;
-            }
-        }
 
     private:
-        virtual void order()
+        void order_by()
         {
-            if (!iterator<T>::stack.empty())
+            switch (o)
             {
-                iterator<T>::last_node = iterator<T>::stack.front();
-                iterator<T>::stack.pop_front();
-                iterator<T>::nodes_order.push(iterator<T>::last_node);
-                if (iterator<T>::last_node->right != nullptr)
+            case order::pre:
+                pre_order();
+                break;
+            case order::in:
+                in_order();
+                break;
+            case order::post:
+                post_order();
+                break;
+            }
+        }
+        void pre_order()
+        {
+            if (!temp_nodes.empty())
+            {
+                last_node = temp_nodes.top();
+                temp_nodes.pop();
+                curr = last_node;
+                if (last_node->right != nullptr)
                 {
-                    iterator<T>::stack.push_front(iterator<T>::last_node->right);
+                    temp_nodes.push(last_node->right);
                 }
-                if (iterator<T>::last_node->left != nullptr)
+                if (last_node->left != nullptr)
                 {
-                    iterator<T>::stack.push_front(iterator<T>::last_node->left);
+                    temp_nodes.push(last_node->left);
                 }
             }
-        }
-    };
-
-    template <typename T>
-    class InOrderIt : public iterator<T>
-    {
-    public:
-        InOrderIt(Node<T> *node = nullptr)
-        {
-
-            if (node != nullptr)
+            else
             {
-                iterator<T>::last_node = node;
-                order();
-                iterator<T>::curr = iterator<T>::nodes_order.front();
-                iterator<T>::nodes_order.pop();
+                curr = nullptr;
+            }
+        }
+        void in_order()
+        {
+            while (last_node != nullptr)
+            {
+                temp_nodes.push(last_node);
+                last_node = last_node->left;
+            }
+            if (!temp_nodes.empty())
+            {
+                last_node = temp_nodes.top();
+                temp_nodes.pop();
+                curr = last_node;
+                last_node = last_node->right;
             }
             else
             {
-                iterator<T>::curr = nullptr;
+                curr = nullptr;
             }
         }
-
-    private:
-        virtual void order()
+        void post_order()
         {
-
-            while (iterator<T>::last_node != nullptr)
+            if (!temp_nodes.empty() && curr == temp_nodes.top()->right)
             {
-                iterator<T>::stack.push_front(iterator<T>::last_node);
-                iterator<T>::last_node = iterator<T>::last_node->left;
-            }
-            if (!iterator<T>::stack.empty())
-            {
-                iterator<T>::last_node = iterator<T>::stack.front();
-                iterator<T>::stack.pop_front();
-                iterator<T>::nodes_order.push(iterator<T>::last_node);
-                iterator<T>::last_node = iterator<T>::last_node->right;
-            }
-        }
-    };
-
-    template <typename T>
-    class PostOrderIt : public iterator<T>
-    {
-    public:
-        PostOrderIt(Node<T> *node = nullptr)
-        {
-            if (node != nullptr)
-            {
-                iterator<T>::last_node = node;
-                order();
-                iterator<T>::curr = iterator<T>::nodes_order.front();
-                iterator<T>::nodes_order.pop();
+                Node<T> *temp = temp_nodes.top();
+                temp_nodes.pop();
+                curr = temp;
             }
             else
             {
-                iterator<T>::curr = nullptr;
-            }
-        }
-
-    private:
-        virtual void order()
-        {
-            //int flag = false;
-            if (!iterator<T>::stack.empty() && iterator<T>::curr == iterator<T>::stack.front()->right)
-            {
-                Node<T> *temp = iterator<T>::stack.front();
-                iterator<T>::stack.pop_front();
-                iterator<T>::nodes_order.push(temp);
-            }
-            else
-            {
-                while (iterator<T>::last_node != nullptr || !iterator<T>::stack.empty())
+                while (last_node != nullptr || !temp_nodes.empty())
                 {
-                    if (iterator<T>::last_node != nullptr)
+                    if (last_node != nullptr)
                     {
-                        iterator<T>::stack.push_front(iterator<T>::last_node);
-                        iterator<T>::last_node = iterator<T>::last_node->left;
+                        temp_nodes.push(last_node);
+                        last_node = last_node->left;
                     }
                     else
                     {
 
-                        Node<T> *temp = iterator<T>::stack.front()->right;
+                        Node<T> *temp = temp_nodes.top()->right;
                         if (temp == nullptr)
                         {
-                            temp = iterator<T>::stack.front();
-                            iterator<T>::stack.pop_front();
-                            iterator<T>::nodes_order.push(temp);
-                            break;
+                            temp = temp_nodes.top();
+                            temp_nodes.pop();
+                            curr = temp;
+                            return;
                         }
-                        iterator<T>::last_node = temp;
+                        last_node = temp;
                     }
                 }
+                curr = nullptr;
             }
         }
     };

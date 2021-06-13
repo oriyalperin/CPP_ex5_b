@@ -121,27 +121,20 @@ namespace ariel
     private:
         /*helper functions*/
 
-        /*copy all the nodes from the given node*/
+        /*copy all nodes from the given node*/
         void copy_nodes(Node<T> *node)
         {
             if (node != nullptr)
             {
-                if (node->left != nullptr && node->right != nullptr)
+                if (node->left != nullptr)
                 {
                     add_left(node->data, node->left->data);
                     copy_nodes(node->left);
-                    add_right(node->data, node->right->data);
-                    copy_nodes(node->right);
                 }
-                if (node->left == nullptr && node->right != nullptr)
+                if (node->right != nullptr)
                 {
                     add_right(node->data, node->right->data);
                     copy_nodes(node->right);
-                }
-                if (node->left != nullptr && node->right == nullptr)
-                {
-                    add_left(node->data, node->left->data);
-                    copy_nodes(node->left);
                 }
             }
         }
@@ -152,6 +145,7 @@ namespace ariel
             delete_nodes(node);
             root = nullptr;
         }
+
         /*delete all the tree that rooted from the given node*/
         void delete_nodes(Node<T> *node)
         {
@@ -159,22 +153,15 @@ namespace ariel
             {
                 while (node->left != nullptr || node->right != nullptr)
                 {
-                    if (node->left == nullptr && node->right != nullptr)
+                    if (node->right != nullptr)
                     {
                         delete_nodes(node->right);
                         node->right = nullptr;
                     }
-                    else if (node->left != nullptr && node->right == nullptr)
+                    if (node->left != nullptr)
                     {
                         delete_nodes(node->left);
                         node->left = nullptr;
-                    }
-                    else
-                    {
-                        delete_nodes(node->left);
-                        node->left = nullptr;
-                        delete_nodes(node->right);
-                        node->right = nullptr;
                     }
                 }
 
@@ -184,6 +171,7 @@ namespace ariel
                 }
             }
         }
+
         /*find node in the tree*/
         Node<T> *find_node(Node<T> *node, T data)
         {
@@ -213,11 +201,13 @@ namespace ariel
             }
             return nullptr;
         }
+
         /*change the data of the given node*/
         void change_data(Node<T> *node, T new_data)
         {
             node->data = new_data;
         }
+
         /*recursive function for output*/
         void print(ostream &os, Node<T> *node, unsigned space, string next_line) const
         {
@@ -258,40 +248,40 @@ namespace ariel
         }
 
     public:
-        PreOrderIt<T> begin_preorder()
+        iterator<T, order::pre> begin_preorder()
         {
-            return PreOrderIt<T>{root};
+            return iterator<T, order::pre>{root};
         }
-        PreOrderIt<T> end_preorder()
+        iterator<T, order::pre> end_preorder()
         {
-            return PreOrderIt<T>{};
-        }
-
-        InOrderIt<T> begin_inorder()
-        {
-            return InOrderIt<T>{root};
-        }
-        InOrderIt<T> end_inorder()
-        {
-            return InOrderIt<T>{};
+            return iterator<T, order::pre>{};
         }
 
-        PostOrderIt<T> begin_postorder()
+        iterator<T, order::in> begin_inorder()
         {
-            return PostOrderIt<T>{root};
+            return iterator<T, order::in>{root};
         }
-        PostOrderIt<T> end_postorder()
+        iterator<T, order::in> end_inorder()
         {
-            return PostOrderIt<T>{};
+            return iterator<T, order::in>{};
         }
 
-        InOrderIt<T> begin()
+        iterator<T, order::post> begin_postorder()
         {
-            return InOrderIt<T>{root};
+            return iterator<T, order::post>{root};
         }
-        InOrderIt<T> end()
+        iterator<T, order::post> end_postorder()
         {
-            return InOrderIt<T>{};
+            return iterator<T, order::post>{};
+        }
+
+        iterator<T, order::in> begin()
+        {
+            return begin_inorder();
+        }
+        iterator<T, order::in> end()
+        {
+            return end_inorder();
         }
     };
 }
