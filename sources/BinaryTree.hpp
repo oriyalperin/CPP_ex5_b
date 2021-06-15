@@ -11,7 +11,6 @@ https://www.geeksforgeeks.org/iterative-postorder-traversal-using-stack/
 #include <sstream>
 #include "Node.hpp"
 #include "Iterators.hpp"
-using namespace std;
 namespace ariel
 {
 
@@ -39,10 +38,18 @@ namespace ariel
         }
         BinaryTree &operator=(const BinaryTree &bt) //= operator
         {
-            if (&this->root != &bt.root)
+            if (this != &bt && root != bt.root)
             {
-                delete_tree(root);
-                *this = BinaryTree(bt);
+                if (bt.root != nullptr)
+                {
+                    delete_tree(root);
+                    add_root(bt.root->data);
+                    copy_nodes(bt.root);
+                }
+                else
+                {
+                    root = nullptr;
+                }
             }
             return *this;
         }
@@ -55,8 +62,12 @@ namespace ariel
 
         BinaryTree &operator=(BinaryTree &&other) noexcept // move assignment
         {
-            this->root = other.root;
-            other.root = nullptr;
+            if (&this->root != &other.root)
+            {
+                delete_tree(root);
+                this->root = other.root;
+                other.root = nullptr;
+            }
             return *this;
         }
 
@@ -78,7 +89,7 @@ namespace ariel
             Node<T> *p = find_node(root, parent);
             if (p == nullptr)
             {
-                throw invalid_argument{"the node doesn't exist"};
+                throw std::invalid_argument{"the node doesn't exist"};
             }
             if (p->left != nullptr)
             {
@@ -95,7 +106,7 @@ namespace ariel
             Node<T> *p = find_node(root, parent);
             if (p == nullptr)
             {
-                throw invalid_argument{"the node doesn't exist"};
+                throw std::invalid_argument{"the node doesn't exist"};
             }
             if (p->right != nullptr)
             {
@@ -106,11 +117,11 @@ namespace ariel
             return *this;
         }
 
-        friend ostream &operator<<(ostream &os, const BinaryTree<T> &bt)
+        friend std::ostream &operator<<(std::ostream &os, const BinaryTree<T> &bt)
         {
             if (bt.root == nullptr)
             {
-                return os << "The tree is empty" << endl;
+                return os << "The tree is empty" << std::endl;
             }
             os << "♣ Binary Tree - BEGIN ♣\n";
             bt.print(os, bt.root, 0, "");
@@ -209,17 +220,17 @@ namespace ariel
         }
 
         /*recursive function for output*/
-        void print(ostream &os, Node<T> *node, unsigned space, string next_line) const
+        void print(std::ostream &os, Node<T> *node, unsigned space, std::string next_line) const
         {
             if (node == nullptr)
             {
                 return;
             }
             os << node->data;
-            stringstream data;
+            std::stringstream data;
             data << node->data;
             unsigned size = data.str().length();
-            next_line += string(space + size - 1, ' ');
+            next_line += std::string(space + size - 1, ' ');
             const unsigned arrow = 5;
             if (node->left != nullptr)
             {

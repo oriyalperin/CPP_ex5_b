@@ -1,13 +1,11 @@
 #pragma once
 #include <iostream>
-#include <queue>
 #include <stack>
 #include <string>
 #include <algorithm>
 #include <sstream>
 #include "Node.hpp"
 #include "BinaryTree.hpp"
-using namespace std;
 namespace ariel
 {
     enum class order
@@ -24,7 +22,7 @@ namespace ariel
         order o;
         Node<T> *curr;
         Node<T> *last_node;
-        stack<Node<T> *> temp_nodes;
+        std::stack<Node<T> *> temp_nodes;
 
     public:
         iterator(order o, Node<T> *node = nullptr) : last_node(node), curr(nullptr), o(o)
